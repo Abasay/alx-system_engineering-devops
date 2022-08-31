@@ -1,2 +1,2 @@
 #!/bin/bash
-(pipe) /boot
+ls -al . .. /boot
