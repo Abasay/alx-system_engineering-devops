@@ -1,1 +1,1 @@
-getting more familiar with shell
+shell basics and permissions
