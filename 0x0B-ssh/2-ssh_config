@@ -1,0 +1,7 @@
+#script to authenticate my login without a password
+
+Host *
+      PasswordAuthentication no
+#        HostbasedAuthentication no
+         IdentifyFile ~/.ssh/school
+ 
