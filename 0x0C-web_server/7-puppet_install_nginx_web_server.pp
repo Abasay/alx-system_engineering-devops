@@ -1,42 +1,24 @@
-#A puppet manifest to install nginx
-#queried on port 80
-
-exec {'apt-get update':
-     command => '/usr/bin/sudo apt-get -y update'
-}
+# Script to install nginx using puppet
 
 package {'nginx':
-ensure => installed,
- require => Exec['apt-get update']
+  ensure => 'present',
 }
 
-file {'/var/www/html/index.html':
-ensure => present,
-content => 'Hello World!'
+exec {'install':
+  command  => 'sudo apt-get update ; sudo apt-get -y install nginx',
+  provider => shell,
 }
 
-
-exec {'write-to-file':
-  command => "/usr/bin/sudo cat /var/www/html/index.html > /dev/null",
-  require => File['/var/www/html/index.html']
+exec {'Hello World!':
+  command  => 'echo "Hello World!" | sudo dd status=none of=/var/www/html/index.html',
+  provider => shell,
 }
 
-
-
-
-$new_rule = "\\\n\tlocation = /redirect_me {\n\t\t return 301 https://github.com/Abasay;\n\t}"
-
-exec {'backup':
-command => '/usr/bin/sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bakup',
-require => Exec['write-to-file']
+exec {'sudo sed -i "s/listen 80 default_server;/listen 80 default_server;\\n\\tlocation \/redirect_me {\\n\\t\\treturn 301 https:\/\/www.youtube.com\/;\\n\\t}/" /etc/nginx/sites-available/default':
+  provider => shell,
 }
 
-exec {"replace":
-command => "/usr/bin/sudo sed -i '53i $new_rule' /etc/nginx/sites-available/default",
-require => Exec['backup'],
-}
-
-exec {'restart':
-command => '/usr/bin/sudo nginx restart',
-require => Exec['replace']
+exec {'run':
+  command  => 'sudo service nginx restart',
+  provider => shell,
 }
