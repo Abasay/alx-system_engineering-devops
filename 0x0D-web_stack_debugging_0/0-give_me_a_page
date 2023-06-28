@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#script to debug why apache2 is not connecting
+
+ln -sf /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/000-default.conf
+
+service apache2 start
+
+
+curl 172.17.0.33
