@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#A Bash script that will display information about subdomains
+if [ "$2" ]
+then
+    record=$(dig "$2.$1" | grep -A1 'ANSWER SECTION:' | grep "$1" | awk '{print $4}')
+    domain=$(dig "$2.$1" | grep -A1 'ANSWER SECTION:' | grep "$1" | awk '{print $5}')
+    echo "The subdomain $2 is a $record record and points to $domain"
+else
+    arr=('www' 'lb-01' 'web-01' 'web-02')
+    for elem in "${arr[@]}"
+    do
+	server="$elem.$1"
+	arecord=$(dig "$server" | grep -A1 'ANSWER SECTION:' | grep "$1" | awk '{print $4}')
+	adomain=$(dig "$server" | grep -A1 'ANSWER SECTION:' | grep "$1" | awk '{print $5}')
+	echo "The subdomain $elem is a $arecord record and points to $adomain"
+    done
+fi
