@@ -16,17 +16,17 @@ def main(id):
     respTodos = json.loads(reqTodos.text)
 
     completed = 0
-    total = 0
     newTodos = []
     for todo in respTodos:
         if todo["userId"] == int(id):
             newTodos.append(todo)
             if todo["completed"]:
                 completed = completed + 1
-    
-    print(f"Employee {respUsers['name']} is done with tasks {completed}/{len(newTodos)}")
+    print(f"Employee {respUsers['name']} is done"
+          " with tasks {completed}/{len(newTodos)}")
     for task in newTodos:
-        print(f"\t\b{task['title']}")
+        if task["completed"]:
+            print(f"\t {task['title']}")
 
 
 if __name__ == "__main__":
