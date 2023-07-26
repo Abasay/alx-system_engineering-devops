@@ -3,10 +3,9 @@
    A python script that fetches data from apis
 """
 
-from sys import argv
-import csv
-import json
 import requests
+from sys import argv
+import json
 
 
 def main(id):
@@ -16,12 +15,18 @@ def main(id):
     respUsers = json.loads(reqUsers.text)
     respTodos = json.loads(reqTodos.text)
 
-    with open(f'{argv[1]}.csv', 'w', newline="") as csvfile:
-        out = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        for todo in respTodos:
-            if todo["userId"] == int(id):
-                out.writerow([todo["userId"], respUsers["username"],
-                              todo["completed"], todo["title"]])
+    completed = 0
+    total = 0
+    newTodos = []
+    for todo in respTodos:
+        if todo["userId"] == int(id):
+            newTodos.append(todo)
+            if todo["completed"]:
+                completed = completed + 1
+    
+    print(f"Employee {respUsers['name']} is done with tasks {completed}/{len(newTodos)}")
+    for task in newTodos:
+        print(f"\t\b{task['title']})
 
 
 if __name__ == "__main__":
