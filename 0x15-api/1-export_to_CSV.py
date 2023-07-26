@@ -4,8 +4,10 @@
 """
 
 from sys import argv
+import csv
 import json
 import requests
+
 
 def main(id):
     """The main function """
@@ -14,18 +16,12 @@ def main(id):
     respUsers = json.loads(reqUsers.text)
     respTodos = json.loads(reqTodos.text)
 
-    completed = 0
-    newTodos = []
-    for todo in respTodos:
-        if todo["userId"] == int(id):
-            newTodos.append(todo)
-            if todo["completed"]:
-                completed = completed + 1
-    print(f"Employee {respUsers['name']} is done"
-          " with tasks {completed}/{len(newTodos)}")
-    for task in newTodos:
-        if task["completed"]:
-            print(f"\t {task['title']}")
+    with open(f'{argv[1]}.csv', 'w', newline="") as csvfile:
+        out = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        for todo in respTodos:
+            if todo["userId"] == int(id):
+                out.writerow([todo["userId"], respUsers["name"],
+                              todo["completed"], todo["title"]])
 
 
 if __name__ == "__main__":
