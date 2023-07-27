@@ -1,28 +1,17 @@
 #!/usr/bin/python3
-"""
-   A python script that fetches data from apis
-"""
-
-from sys import argv
+"""Script to export data in the CSV format"""
 import csv
-import json
-import requests
-
-
-def main(id):
-    """The main function """
-    reqUsers = requests.get(f'https://jsonplaceholder.typicode.com/users/{id}')
-    reqTodos = requests.get(f'https://jsonplaceholder.typicode.com/todos')
-    respUsers = json.loads(reqUsers.text)
-    respTodos = json.loads(reqTodos.text)
-
-    with open(f'{argv[1]}.csv', 'w', newline="") as csvfile:
-        out = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        for todo in respTodos:
-            if todo["userId"] == int(id):
-                out.writerow([todo["userId"], respUsers["username"],
-                              todo["completed"], todo["title"]])
-
+import requests as r
+import sys
 
 if __name__ == "__main__":
-    main(argv[1])
+    user_id = sys.argv[1]
+    url = "https://jsonplaceholder.typicode.com/"
+    usr = r.get(url + "users/{}".format(user_id)).json()
+    username = usr.get("username")
+    to_do = r.get(url + "todos", params={"userId": user_id}).json()
+
+    with open("{}.csv".format(user_id), "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        [writer.writerow([user_id, username, elm.get("completed"),
+                          elm.get("title")]) for elm in to_do]
