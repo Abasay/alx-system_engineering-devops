@@ -1,18 +1,32 @@
 #!/usr/bin/python3
-"""script using this REST API, for a given employee ID,
-returns information about his/her TODO list progress."""
-import requests as r
-import sys
+"""
+   A python script that fetches data from apis
+"""
 
-if __name__ == '__main__':
-    url = 'https://jsonplaceholder.typicode.com/'
-    usr_id = r.get(url + 'users/{}'.format(sys.argv[1])).json()
-    to_do = r.get(url + 'todos', params={'userId': sys.argv[1]}).json()
-#    print(to_do)
-    completed = [title.get("title") for title in to_do if
-                 title.get('completed') is True]
-    print(completed)
-    print("Employee {} is done with tasks({}/{}):".format(usr_id.get("name"),
-                                                          len(completed),
-                                                          len(to_do)))
-    [print("\t {}".format(title)) for title in completed]
+from sys import argv
+import json
+import requests
+
+def main(id):
+    """The main function """
+    reqUsers = requests.get(f'https://jsonplaceholder.typicode.com/users/{id}')
+    reqTodos = requests.get(f'https://jsonplaceholder.typicode.com/todos')
+    respUsers = json.loads(reqUsers.text)
+    respTodos = json.loads(reqTodos.text)
+
+    completed = 0
+    newTodos = []
+    for todo in respTodos:
+        if todo["userId"] == int(id):
+            newTodos.append(todo)
+            if todo["completed"]:
+                completed = completed + 1
+    print(f"Employee {respUsers['name']} is done"
+          " with tasks {completed}/{len(newTodos)}")
+    for task in newTodos:
+        if task["completed"]:
+            print(f"\t {task['title']}")
+
+
+if __name__ == "__main__":
+    main(argv[1])

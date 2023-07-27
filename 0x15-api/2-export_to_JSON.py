@@ -1,19 +1,35 @@
 #!/usr/bin/python3
-"""Exports to-do list information for a given employee ID to JSON format."""
+"""
+   A python script that fetches data from apis
+"""
+
+from sys import argv
 import json
 import requests
-import sys
+
+
+def main(id):
+    """The main function """
+    reqUsers = requests.get(f'https://jsonplaceholder.typicode.com/users/{id}')
+    reqTodos = requests.get(f'https://jsonplaceholder.typicode.com/todos')
+    respUsers = json.loads(reqUsers.text)
+    respTodos = json.loads(reqTodos.text)
+    newTodos = []
+    newDic = {}
+    details = []
+    completeDict = {}
+    for i in range(0, len(respTodos)):
+        if respTodos[i]["userId"] == int(id):
+            newTodos.append(respTodos[i])
+    for i in range(0, len(newTodos)):
+        newDic["task"] = newTodos[i]["title"]
+        newDic["completed"] = newTodos[i]["completed"]
+        newDic["username"] = respUsers["username"]
+        details.append(newDic.copy())
+    completeDict = {id: details}
+    with open(f'{id}.json', 'w') as myfile:
+        json.dump(completeDict, myfile)
+
 
 if __name__ == "__main__":
-    user_id = sys.argv[1]
-    url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(url + "users/{}".format(user_id)).json()
-    username = user.get("username")
-    todos = requests.get(url + "todos", params={"userId": user_id}).json()
-
-    with open("{}.json".format(user_id), "w") as jsonfile:
-        json.dump({user_id: [{
-                "task": t.get("title"),
-                "completed": t.get("completed"),
-                "username": username
-            } for t in todos]}, jsonfile)
+    main(argv[1])
