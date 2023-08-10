@@ -7,19 +7,25 @@
 import requests
 
 
-def recurse(subreddit):
+def recurse(subreddit, hot_list=[], after="", count=0):
     '''
     to fetch the number of subscribers
     '''    
     headers_dict = {'User-Agent':
                     "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"}
-    url = "https://www.reddit.com/r/{}/top.json".format(subreddit)
-    someParams = {'limit': '10'}
-    res = requests.get(url, params=someParams,
-                       allow_redirects=False, headers=headers_dict)
-    result = res.json()
-    data = result.get("data").get("children")
-    for title in data:
-        print(title.get('data').get('title'))
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    newParams = {
+        'after': after,
+        'count': count,
+        'limit': 100
+    }
+    res = requests.get(url, params=newParams, allow_redirects=False, headers=headers_dict)
     if res.status_code == 404:
         return None
+    newAfter = res.json().get('data').get('after')
+    count += res.json().get('data').get('dist')    
+    resData = res.json().get('data').get('children')
+    for data in resData:
+        hot_list.append(data.get('data').get('title'))
+    recurse(subreddit, hot_list=hot_list, after=newAfter, count=count)
+    return hot_list
