@@ -1,9 +1,8 @@
 #fix for nginx
 
-exec {'fix-for-nginx':
-  command => 'sed -i "s@usr/share/nginx/html@var/www/html@g" /etc/nginx/sites-available/default',
-  path    => '/usr/local/bin/:/bin/',
-  before  => Exec['restart-nginx']
+exec { 'fix--for-nginx':
+  command => 'sed -i "s/15/4096/" /etc/default/nginx',
+  path    => '/usr/local/bin/:/bin/'
 }
 
 #Restart nginx
