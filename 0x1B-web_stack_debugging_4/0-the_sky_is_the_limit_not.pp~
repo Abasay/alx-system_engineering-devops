@@ -1,0 +1,13 @@
+#fix fpr nginx
+
+exec {'fix-for-nginx':
+     command => 'sed -i "24s/.*/root /var/www/html;/" /etc/nginx/sites-available/default',
+     path => '/usr/local/bin/:/bin/'
+}
+
+#Restart nginx
+exec {'restart-nginx':
+     command => 'service nginx restart',
+     path => '/etc/init.d/'
+}
+     
