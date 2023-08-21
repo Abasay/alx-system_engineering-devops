@@ -1,4 +1,4 @@
-#!usr/bin/env bash
+#!/usr/bin/env bash
 
 # Check if Gunicorn process is running
 if pgrep gunicorn >/dev/null 2>&1; then
