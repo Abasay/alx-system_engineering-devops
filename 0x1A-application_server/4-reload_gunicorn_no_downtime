@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Check if Gunicorn process is running
+if pgrep gunicorn >/dev/null 2>&1; then
+    # Get the process ID of Gunicorn
+    gunicorn_pid=$(pgrep gunicorn)
+
+    # Send a graceful reload signal to Gunicorn
+    echo "Reloading Gunicorn..."
+    kill -HUP "$gunicorn_pid"
+    echo "Gunicorn reloaded."
+else
+    echo "Gunicorn is not running."
+fi
